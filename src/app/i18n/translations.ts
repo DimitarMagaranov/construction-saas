@@ -24,6 +24,9 @@ export const translations = {
             password: 'Парола',
             signIn: 'Вход',
         },
+        common: {
+            logout: "Изход",
+          },
     },
     en: {
         appName: 'Construction SaaS',
@@ -47,5 +50,8 @@ export const translations = {
             password: 'Password',
             signIn: 'Sign in',
         },
+        common: {
+            logout: "Logout",
+          },
     },
 } as const;

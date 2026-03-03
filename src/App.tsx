@@ -7,11 +7,14 @@ import ProjectsPage from './features/projects/pages/ProjectsPage';
 import TransportRequestsPage from './features/transport/pages/TransportRequestsPage';
 import LoginPage from './core/auth/LoginPage';
 import { ProtectedRoute } from './core/auth/ProtectedRoute';
+import { PublicOnlyRoute } from './core/auth/PublicOnlyRoute';
 
 export default function App() {
     return (
         <Routes>
-            <Route path="/login" element={<LoginPage />} />
+            <Route element={<PublicOnlyRoute />}>
+                <Route path="/login" element={<LoginPage />} />
+            </Route>
 
             <Route element={<ProtectedRoute />}>
                 <Route element={<AppLayout />}>
