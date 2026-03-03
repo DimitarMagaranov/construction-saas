@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 
 import AppLayout from './shared/ui/layouts/AppLayout';
 import DashboardPage from './features/dashboard/pages/DashboardPage';
@@ -15,7 +15,8 @@ export default function App() {
 
             <Route element={<ProtectedRoute />}>
                 <Route element={<AppLayout />}>
-                    <Route path="/" element={<DashboardPage />} />
+                    <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                    <Route path="/dashboard" element={<DashboardPage />} />
                     <Route path="/projects" element={<ProjectsPage />} />
                     <Route path="/transport" element={<TransportRequestsPage />} />
                 </Route>
