@@ -1,88 +1,67 @@
-import { Outlet, Link as RouterLink, useLocation } from "react-router-dom";
-import {
-  AppBar,
-  Box,
-  Button,
-  Divider,
-  Drawer,
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Toolbar,
-  Typography,
-} from "@mui/material";
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import BusinessIcon from "@mui/icons-material/Business";
-import LocalShippingIcon from "@mui/icons-material/LocalShipping";
-import { useI18n } from "../i18n/i18n";
+import { Outlet, Link as RouterLink, useLocation } from 'react-router-dom';
+import { AppBar, Box, Button, Divider, Drawer, List, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography } from '@mui/material';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import BusinessIcon from '@mui/icons-material/Business';
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import { useI18n } from '../i18n/i18n';
 
 const drawerWidth = 260;
 
 export default function AppLayout() {
-  const location = useLocation();
-  const { lang, setLang, t } = useI18n();
+    const location = useLocation();
+    const { lang, setLang, t } = useI18n();
 
-  const navItems = [
-    { label: t.nav.dashboard, path: "/dashboard", icon: <DashboardIcon /> },
-    { label: t.nav.projects, path: "/projects", icon: <BusinessIcon /> },
-    { label: t.nav.transport, path: "/transport", icon: <LocalShippingIcon /> },
-  ];
+    const navItems = [
+        { label: t.nav.dashboard, path: '/dashboard', icon: <DashboardIcon /> },
+        { label: t.nav.projects, path: '/projects', icon: <BusinessIcon /> },
+        { label: t.nav.transport, path: '/transport', icon: <LocalShippingIcon /> },
+    ];
 
-  return (
-    <Box sx={{ display: "flex" }}>
-      <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-        <Toolbar>
-          <Typography variant="h6" noWrap component="div">
-            {t.appName}
-          </Typography>
+    return (
+        <Box sx={{ display: 'flex' }}>
+            <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+                <Toolbar>
+                    <Typography variant="h6" noWrap component="div">
+                        {t.appName}
+                    </Typography>
 
-          <Box sx={{ flexGrow: 1 }} />
+                    <Box sx={{ flexGrow: 1 }} />
 
-          <Button
-            color="inherit"
-            onClick={() => setLang(lang === "bg" ? "en" : "bg")}
-            sx={{ minWidth: 56 }}
-          >
-            {lang === "bg" ? "EN" : "BG"}
-          </Button>
-        </Toolbar>
-      </AppBar>
+                    <Button color="inherit" onClick={() => setLang(lang === 'bg' ? 'en' : 'bg')} sx={{ minWidth: 56 }}>
+                        {lang === 'bg' ? 'EN' : 'BG'}
+                    </Button>
+                </Toolbar>
+            </AppBar>
 
-      <Drawer
-        variant="permanent"
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: "border-box" },
-        }}
-      >
-        <Toolbar />
-        <Box sx={{ overflow: "auto" }}>
-          <List>
-            {navItems.map((item) => {
-              const selected = location.pathname === item.path;
-              return (
-                <ListItemButton
-                  key={item.path}
-                  component={RouterLink}
-                  to={item.path}
-                  selected={selected}
-                >
-                  <ListItemIcon>{item.icon}</ListItemIcon>
-                  <ListItemText primary={item.label} />
-                </ListItemButton>
-              );
-            })}
-          </List>
-          <Divider />
+            <Drawer
+                variant="permanent"
+                sx={{
+                    width: drawerWidth,
+                    flexShrink: 0,
+                    [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
+                }}
+            >
+                <Toolbar />
+                <Box sx={{ overflow: 'auto' }}>
+                    <List>
+                        {navItems.map((item) => {
+                            const selected = location.pathname === item.path;
+                            return (
+                                <ListItemButton key={item.path} component={RouterLink} to={item.path} selected={selected}>
+                                    <ListItemIcon>{item.icon}</ListItemIcon>
+                                    <ListItemText primary={item.label} />
+                                </ListItemButton>
+                            );
+                        })}
+                    </List>
+                    <Divider />
+                </Box>
+            </Drawer>
+
+            <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+                <Toolbar />
+                <Outlet />
+            </Box>
         </Box>
-      </Drawer>
-
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <Toolbar />
-        <Outlet />
-      </Box>
-    </Box>
-  );
+    );
 }
