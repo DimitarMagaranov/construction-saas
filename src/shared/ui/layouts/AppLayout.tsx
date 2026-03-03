@@ -4,12 +4,16 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import BusinessIcon from '@mui/icons-material/Business';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import { useI18n } from '../../../app/i18n/i18n';
+import { signOut } from 'firebase/auth';
+import { auth } from '../../../core/firebase/firebase';
+import { useAuth } from '../../../core/auth/AuthProvider';
 
 const drawerWidth = 260;
 
 export default function AppLayout() {
     const location = useLocation();
     const { lang, setLang, t } = useI18n();
+    const { user } = useAuth();
 
     const navItems = [
         { label: t.nav.dashboard, path: '/dashboard', icon: <DashboardIcon /> },
@@ -27,8 +31,18 @@ export default function AppLayout() {
 
                     <Box sx={{ flexGrow: 1 }} />
 
+                    {user?.email && (
+                        <Typography variant="body2" sx={{ mr: 2, opacity: 0.9 }}>
+                            {user.email}
+                        </Typography>
+                    )}
+
                     <Button color="inherit" onClick={() => setLang(lang === 'bg' ? 'en' : 'bg')} sx={{ minWidth: 56 }}>
                         {lang === 'bg' ? 'EN' : 'BG'}
+                    </Button>
+
+                    <Button color="inherit" onClick={() => signOut(auth)} sx={{ minWidth: 80 }}>
+                        {t.common.logout}
                     </Button>
                 </Toolbar>
             </AppBar>

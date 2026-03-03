@@ -13,11 +13,20 @@ export const translations = {
             dashboard: 'Табло',
             projects: 'Обекти',
             transport: 'Транспортни заявки',
-            login: 'Вход',
+            login: {
+                title: 'Вход',
+                email: 'Имейл',
+                password: 'Парола',
+                signIn: 'Вход',
+                signingIn: 'Влизане...',
+            },
             email: 'Имейл',
             password: 'Парола',
             signIn: 'Вход',
         },
+        common: {
+            logout: "Изход",
+          },
     },
     en: {
         appName: 'Construction SaaS',
@@ -30,10 +39,19 @@ export const translations = {
             dashboard: 'Dashboard',
             projects: 'Projects',
             transport: 'Transport Requests',
-            login: 'Login',
+            login: {
+                title: 'Login',
+                email: 'Email',
+                password: 'Password',
+                signIn: 'Sign in',
+                signingIn: 'Signing in...',
+            },
             email: 'Email',
             password: 'Password',
             signIn: 'Sign in',
         },
+        common: {
+            logout: "Logout",
+          },
     },
 } as const;
