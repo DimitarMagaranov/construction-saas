@@ -3,7 +3,7 @@ import { AppBar, Box, Button, Divider, Drawer, List, ListItemButton, ListItemIco
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import BusinessIcon from '@mui/icons-material/Business';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-import { useI18n } from '../i18n/i18n';
+import { useI18n } from '../../../app/i18n/i18n';
 
 const drawerWidth = 260;
 
