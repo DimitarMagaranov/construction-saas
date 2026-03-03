@@ -1,9 +1,9 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
-import AppLayout from './layouts/AppLayout';
-import DashboardPage from './pages/DashboardPage';
-import ProjectsPage from './pages/ProjectsPage';
-import TransportRequestsPage from './pages/TransportRequestsPage';
-import LoginPage from './pages/LoginPage';
+import AppLayout from './shared/ui/layouts/AppLayout';
+import DashboardPage from './features/dashboard/pages/DashboardPage';
+import ProjectsPage from './features/projects/pages/ProjectsPage';
+import TransportRequestsPage from './features/transport/pages/TransportRequestsPage';
+import LoginPage from './core/auth/LoginPage';
 
 export default function App() {
     return (
