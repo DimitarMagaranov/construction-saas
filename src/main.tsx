@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { CssBaseline } from '@mui/material';
+import { CssBaseline, GlobalStyles } from '@mui/material';
 import { ThemeProvider } from '@mui/material/styles';
 import { BrowserRouter } from 'react-router-dom';
 import { theme } from './app/theme';
@@ -12,6 +12,17 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
         <ThemeProvider theme={theme}>
             <CssBaseline />
+            <GlobalStyles
+                styles={{
+                    '#__firebase_auth_emulator_warning__': {
+                        display: 'none !important',
+                        pointerEvents: 'none !important',
+                    },
+                    '#__firebase_auth_emulator_warning__ *': {
+                        pointerEvents: 'none !important',
+                    },
+                }}
+            />
             <BrowserRouter>
                 <I18nProvider>
                     <AuthProvider>
