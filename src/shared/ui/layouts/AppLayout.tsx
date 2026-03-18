@@ -7,6 +7,7 @@ import { useI18n } from '../../../app/i18n/i18n';
 import { signOut } from 'firebase/auth';
 import { auth } from '../../../core/firebase/firebase';
 import { useAuth } from '../../../core/auth/AuthProvider';
+import { useUserProfile } from '../../../core/users/useUserProfile';
 
 const drawerWidth = 260;
 
@@ -14,6 +15,7 @@ export default function AppLayout() {
     const location = useLocation();
     const { lang, setLang, t } = useI18n();
     const { user } = useAuth();
+    const { profile, loading: profileLoading, error: profileError } = useUserProfile(user?.uid);
 
     const navItems = [
         { label: t.nav.dashboard, path: '/dashboard', icon: <DashboardIcon /> },
@@ -34,6 +36,22 @@ export default function AppLayout() {
                     {user?.email && (
                         <Typography variant="body2" sx={{ mr: 2, opacity: 0.9 }}>
                             {user.email}
+                        </Typography>
+                    )}
+
+                    {profileLoading && (
+                        <Typography variant="body2" sx={{ mr: 2, opacity: 0.8 }}>
+                            Profile: loading...
+                        </Typography>
+                    )}
+                    {profileError && (
+                        <Typography variant="body2" sx={{ mr: 2, color: 'error.main' }}>
+                            Profile error
+                        </Typography>
+                    )}
+                    {!profileLoading && user && !profile && (
+                        <Typography variant="body2" sx={{ mr: 2, color: 'warning.main' }}>
+                            Profile missing
                         </Typography>
                     )}
 
