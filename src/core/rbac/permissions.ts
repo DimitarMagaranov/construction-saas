@@ -1,0 +1,62 @@
+import type { Permission, Role } from "../models/types";
+
+export const PERMISSIONS = {
+  // Projects
+  PROJECTS_READ: "projects.read",
+  PROJECTS_WRITE: "projects.write",
+
+  // Transport
+  TRANSPORT_REQUESTS_READ: "transport.requests.read",
+  TRANSPORT_REQUESTS_CREATE: "transport.requests.create",
+  TRANSPORT_REQUESTS_APPROVE: "transport.requests.approve",
+  TRANSPORT_REQUESTS_DISPATCH: "transport.requests.dispatch",
+  TRANSPORT_REQUESTS_COMPLETE: "transport.requests.complete",
+
+  // Inventory (planned)
+  INVENTORY_READ: "inventory.read",
+  INVENTORY_WRITE: "inventory.write",
+} as const satisfies Record<string, Permission>;
+
+/**
+ * Minimal RBAC map (MVP skeleton).
+ * Later we'll extend and enforce in UI + Firestore rules.
+ */
+export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
+  SuperAdmin: Object.values(PERMISSIONS),
+
+  OrganizationOwner: [
+    PERMISSIONS.PROJECTS_READ,
+    PERMISSIONS.PROJECTS_WRITE,
+    PERMISSIONS.TRANSPORT_REQUESTS_READ,
+    PERMISSIONS.TRANSPORT_REQUESTS_CREATE,
+    PERMISSIONS.TRANSPORT_REQUESTS_APPROVE,
+    PERMISSIONS.TRANSPORT_REQUESTS_DISPATCH,
+    PERMISSIONS.TRANSPORT_REQUESTS_COMPLETE,
+    PERMISSIONS.INVENTORY_READ,
+    PERMISSIONS.INVENTORY_WRITE,
+  ],
+
+  OfficeAdmin: [
+    PERMISSIONS.PROJECTS_READ,
+    PERMISSIONS.PROJECTS_WRITE,
+    PERMISSIONS.TRANSPORT_REQUESTS_READ,
+  ],
+
+  TechnicalManager: [
+    PERMISSIONS.PROJECTS_READ,
+    PERMISSIONS.TRANSPORT_REQUESTS_READ,
+    PERMISSIONS.TRANSPORT_REQUESTS_CREATE,
+  ],
+
+  TransportManager: [
+    PERMISSIONS.TRANSPORT_REQUESTS_READ,
+    PERMISSIONS.TRANSPORT_REQUESTS_APPROVE,
+    PERMISSIONS.TRANSPORT_REQUESTS_DISPATCH,
+  ],
+
+  Driver: [PERMISSIONS.TRANSPORT_REQUESTS_READ, PERMISSIONS.TRANSPORT_REQUESTS_COMPLETE],
+
+  SubcontractorAdmin: [PERMISSIONS.PROJECTS_READ, PERMISSIONS.INVENTORY_READ],
+  SubcontractorWorker: [PERMISSIONS.PROJECTS_READ],
+  Investor: [PERMISSIONS.PROJECTS_READ, PERMISSIONS.TRANSPORT_REQUESTS_READ],
+};
