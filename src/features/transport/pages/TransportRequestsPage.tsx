@@ -5,10 +5,11 @@ import { useAuth } from '../../../core/auth/AuthProvider';
 import { useI18n } from '../../../app/i18n/i18n';
 import RequirePermission from '../../../core/rbac/RequirePermission';
 import { PERMISSIONS } from '../../../core/rbac/permissions';
-import { MOCK_PROFILE } from '../../../core/rbac/mockProfile';
+import { useUserProfile } from '../../../core/users/useUserProfile';
 
 export default function TransportRequestsPage() {
     const { user } = useAuth();
+    const {profile} = useUserProfile(user?.uid);
     const { t } = useI18n();
 
     const [result, setResult] = useState<any>(null);
@@ -67,7 +68,7 @@ export default function TransportRequestsPage() {
                 )}
             </Box>
 
-            <RequirePermission profile={MOCK_PROFILE} permission={PERMISSIONS.TRANSPORT_REQUESTS_APPROVE}>
+            <RequirePermission profile={profile} permission={PERMISSIONS.TRANSPORT_REQUESTS_APPROVE}>
                 <Button variant="contained">Approve (visible only with permission)</Button>
             </RequirePermission>
 
