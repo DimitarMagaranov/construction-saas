@@ -1,4 +1,4 @@
-import { Outlet, Link as RouterLink, useLocation } from 'react-router-dom';
+import { Navigate, Outlet, Link as RouterLink, useLocation } from 'react-router-dom';
 import { AppBar, Box, Button, Divider, Drawer, List, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import BusinessIcon from '@mui/icons-material/Business';
@@ -15,13 +15,24 @@ export default function AppLayout() {
     const location = useLocation();
     const { lang, setLang, t } = useI18n();
     const { user } = useAuth();
-    const { profile, isLoading, error } = useUserProfileContext();
+    const { profile, isLoading, resolved, resolvedUid, error } = useUserProfileContext();
 
     const navItems = [
         { label: t.nav.dashboard, path: '/dashboard', icon: <DashboardIcon /> },
         { label: t.nav.projects, path: '/projects', icon: <BusinessIcon /> },
         { label: t.nav.transport, path: '/transport', icon: <LocalShippingIcon /> },
     ];
+
+    console.log({
+        userUid: user?.uid,
+        isLoading,
+        hasProfile: !!profile,
+        pathname: location.pathname,
+    });
+
+    if (!isLoading && user && resolved && resolvedUid === user.uid && !profile && location.pathname !== '/profile-setup') {
+        return <Navigate to="/profile-setup" replace />;
+    }
 
     return (
         <Box sx={{ display: 'flex' }}>
