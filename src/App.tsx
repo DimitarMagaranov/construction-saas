@@ -1,4 +1,3 @@
-import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 
 import AppLayout from './shared/ui/layouts/AppLayout';
@@ -8,6 +7,7 @@ import TransportRequestsPage from './features/transport/pages/TransportRequestsP
 import LoginPage from './core/auth/LoginPage';
 import { ProtectedRoute } from './core/auth/ProtectedRoute';
 import { PublicOnlyRoute } from './core/auth/PublicOnlyRoute';
+import ProfileSetupPage from './features/users/pages/ProfileSetupPage';
 
 export default function App() {
     return (
@@ -22,6 +22,7 @@ export default function App() {
                     <Route path="/dashboard" element={<DashboardPage />} />
                     <Route path="/projects" element={<ProjectsPage />} />
                     <Route path="/transport" element={<TransportRequestsPage />} />
+                    <Route path="/profile-setup" element={<ProfileSetupPage />} />
                 </Route>
             </Route>
         </Routes>

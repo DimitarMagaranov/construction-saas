@@ -1,4 +1,4 @@
-import { Outlet, Link as RouterLink, useLocation } from 'react-router-dom';
+import { Navigate, Outlet, Link as RouterLink, useLocation } from 'react-router-dom';
 import { AppBar, Box, Button, Divider, Drawer, List, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import BusinessIcon from '@mui/icons-material/Business';
@@ -7,7 +7,7 @@ import { useI18n } from '../../../app/i18n/i18n';
 import { signOut } from 'firebase/auth';
 import { auth } from '../../../core/firebase/firebase';
 import { useAuth } from '../../../core/auth/AuthProvider';
-import { useUserProfile } from '../../../core/users/useUserProfile';
+import { useUserProfileContext } from '../../../core/users/UserProfileProvider';
 
 const drawerWidth = 260;
 
@@ -15,13 +15,17 @@ export default function AppLayout() {
     const location = useLocation();
     const { lang, setLang, t } = useI18n();
     const { user } = useAuth();
-    const { profile, loading: profileLoading, error: profileError } = useUserProfile(user?.uid);
+    const { profile, isLoading, resolved, resolvedUid, error } = useUserProfileContext();
 
     const navItems = [
         { label: t.nav.dashboard, path: '/dashboard', icon: <DashboardIcon /> },
         { label: t.nav.projects, path: '/projects', icon: <BusinessIcon /> },
         { label: t.nav.transport, path: '/transport', icon: <LocalShippingIcon /> },
     ];
+
+    if (!isLoading && user && resolved && resolvedUid === user.uid && !profile && location.pathname !== '/profile-setup') {
+        return <Navigate to="/profile-setup" replace />;
+    }
 
     return (
         <Box sx={{ display: 'flex' }}>
@@ -39,17 +43,17 @@ export default function AppLayout() {
                         </Typography>
                     )}
 
-                    {profileLoading && (
+                    {isLoading && (
                         <Typography variant="body2" sx={{ mr: 2, opacity: 0.8 }}>
                             Profile: loading...
                         </Typography>
                     )}
-                    {profileError && (
+                    {error && (
                         <Typography variant="body2" sx={{ mr: 2, color: 'error.main' }}>
                             Profile error
                         </Typography>
                     )}
-                    {!profileLoading && user && !profile && (
+                    {!isLoading && user && !profile && (
                         <Typography variant="body2" sx={{ mr: 2, color: 'warning.main' }}>
                             Profile missing
                         </Typography>
