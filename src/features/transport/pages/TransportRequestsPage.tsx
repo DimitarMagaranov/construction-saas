@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Alert, Box, Button, Stack, Typography } from '@mui/material';
 import { readSmokeDoc, writeSmokeDoc } from '../../../core/firestore/smokeTest';
 import { useI18n } from '../../../app/i18n/i18n';
@@ -22,8 +22,8 @@ export default function TransportRequestsPage() {
         try {
             await writeSmokeDoc(user?.uid ?? null);
             setResult({ ok: true, action: 'write' });
-        } catch (e: any) {
-            setError(e?.message ?? String(e));
+        } catch (e: unknown) {
+            setError(e instanceof Error ? e.message : String(e));
         } finally {
             setBusy(false);
         }

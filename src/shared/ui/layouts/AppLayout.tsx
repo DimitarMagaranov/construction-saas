@@ -23,13 +23,6 @@ export default function AppLayout() {
         { label: t.nav.transport, path: '/transport', icon: <LocalShippingIcon /> },
     ];
 
-    console.log({
-        userUid: user?.uid,
-        isLoading,
-        hasProfile: !!profile,
-        pathname: location.pathname,
-    });
-
     if (!isLoading && user && resolved && resolvedUid === user.uid && !profile && location.pathname !== '/profile-setup') {
         return <Navigate to="/profile-setup" replace />;
     }
