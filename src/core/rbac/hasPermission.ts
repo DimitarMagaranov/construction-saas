@@ -1,4 +1,4 @@
-import type { Permission, Role, UserProfile } from "../models/types";
+import type { OrganizationMember, Permission, Role } from "../models/types";
 import { ROLE_PERMISSIONS } from "./permissions";
 
 function permsForRoles(roles: Role[]): Set<Permission> {
@@ -10,23 +10,14 @@ function permsForRoles(roles: Role[]): Set<Permission> {
 }
 
 /**
- * Check permission at org-level or (optionally) project-level.
- * - If projectId is provided, checks projectRoles[projectId] first, then falls back to org roles.
+ * Check permission from organization-scoped roles.
  */
 export function hasPermission(
-  profile: UserProfile | null | undefined,
-  permission: Permission,
-  projectId?: string
+  member: OrganizationMember | null | undefined,
+  permission: Permission
 ): boolean {
-  if (!profile) return false;
+  if (!member) return false;
 
-  // project-scoped roles
-  if (projectId && profile.projectRoles?.[projectId]?.length) {
-    const projectPerms = permsForRoles(profile.projectRoles[projectId]);
-    if (projectPerms.has(permission)) return true;
-  }
-
-  // org-level roles
-  const orgPerms = permsForRoles(profile.roles ?? []);
+  const orgPerms = permsForRoles(member.roles ?? []);
   return orgPerms.has(permission);
 }

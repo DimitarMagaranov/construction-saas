@@ -5,15 +5,24 @@ import { useI18n } from '../../../app/i18n/i18n';
 import RequirePermission from '../../../core/rbac/RequirePermission';
 import { PERMISSIONS } from '../../../core/rbac/permissions';
 import { useAuth } from '../../../core/auth/AuthProvider';
+import type { OrganizationMember } from '../../../core/models/types';
 
 export default function TransportRequestsPage() {
     const { user } = useAuth();
-    
+
     const { t } = useI18n();
 
     const [result, setResult] = useState<any>(null);
     const [error, setError] = useState<string | null>(null);
     const [busy, setBusy] = useState(false);
+
+    const mockMember: OrganizationMember = {
+        organizationId: 'demo-org',
+        uid: user?.uid ?? 'demo-user',
+        roles: ['OrganizationOwner'],
+        createdAt: null,
+        updatedAt: null,
+    };
 
     async function onWrite() {
         setBusy(true);
@@ -67,7 +76,7 @@ export default function TransportRequestsPage() {
                 )}
             </Box>
 
-            <RequirePermission permission={PERMISSIONS.TRANSPORT_REQUESTS_APPROVE}>
+            <RequirePermission member={mockMember} permission={PERMISSIONS.TRANSPORT_REQUESTS_APPROVE}>
                 <Button variant="contained">Approve (visible only with permission)</Button>
             </RequirePermission>
 

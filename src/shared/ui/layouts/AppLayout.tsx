@@ -21,6 +21,8 @@ export default function AppLayout() {
         { label: t.nav.dashboard, path: '/dashboard', icon: <DashboardIcon /> },
         { label: t.nav.projects, path: '/projects', icon: <BusinessIcon /> },
         { label: t.nav.transport, path: '/transport', icon: <LocalShippingIcon /> },
+        { label: 'Organizations', path: '/organizations', icon: <BusinessIcon /> },
+        { label: t.nav.createOrganization, path: '/organizations/create', icon: <BusinessIcon /> },
     ];
 
     if (!isLoading && user && resolved && resolvedUid === user.uid && !profile && location.pathname !== '/profile-setup') {

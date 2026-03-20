@@ -8,6 +8,7 @@ export const translations = {
             dashboard: 'Табло',
             projects: 'Обекти',
             transport: 'Транспорт',
+            createOrganization: 'Създай фирма',
         },
         pages: {
             dashboard: 'Табло',
@@ -34,6 +35,7 @@ export const translations = {
             dashboard: 'Dashboard',
             projects: 'Projects',
             transport: 'Transport',
+            createOrganization: 'Create Organization',
         },
         pages: {
             dashboard: 'Dashboard',

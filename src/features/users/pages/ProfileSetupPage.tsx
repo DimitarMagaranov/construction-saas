@@ -40,12 +40,12 @@ export default function ProfileSetupPage() {
     return (
         <Box>
             <Stack spacing={2}>
-                <Typography variant="h4">Profile setup</Typography>
+                <Typography variant="h4">Complete your account</Typography>
 
-                <Typography variant="body1">Your account is authenticated, but your app profile is missing.</Typography>
+                <Typography variant="body1">Your account is authenticated, but your user profile is missing.</Typography>
 
                 <Button variant="contained" onClick={onCreateProfile} disabled={busy}>
-                    {busy ? 'Creating profile...' : 'Create profile'}
+                    {busy ? 'Creating account profile...' : 'Create account profile'}
                 </Button>
 
                 {error && <Alert severity="error">{error}</Alert>}

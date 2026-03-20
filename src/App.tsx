@@ -8,6 +8,8 @@ import LoginPage from './core/auth/LoginPage';
 import { ProtectedRoute } from './core/auth/ProtectedRoute';
 import { PublicOnlyRoute } from './core/auth/PublicOnlyRoute';
 import ProfileSetupPage from './features/users/pages/ProfileSetupPage';
+import CreateOrganizationPage from './features/organizations/pages/CreateOrganizationPage';
+import OrganizationsPage from './features/organizations/pages/OrganizationsPage';
 
 export default function App() {
     return (
@@ -23,6 +25,8 @@ export default function App() {
                     <Route path="/projects" element={<ProjectsPage />} />
                     <Route path="/transport" element={<TransportRequestsPage />} />
                     <Route path="/profile-setup" element={<ProfileSetupPage />} />
+                    <Route path="/organizations/create" element={<CreateOrganizationPage />} />
+                    <Route path="/organizations" element={<OrganizationsPage />} />
                 </Route>
             </Route>
         </Routes>
