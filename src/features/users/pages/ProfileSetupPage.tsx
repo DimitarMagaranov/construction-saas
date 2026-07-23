@@ -26,8 +26,8 @@ export default function ProfileSetupPage() {
                 email: user.email,
                 displayName: user.displayName,
             });
-        } catch (e: any) {
-            setError(e?.message ?? String(e));
+        } catch (e: unknown) {
+            setError(e instanceof Error ? e.message : String(e));
         } finally {
             setBusy(false);
         }

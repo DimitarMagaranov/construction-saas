@@ -1,6 +1,9 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    // DEV RULES:
+    // These rules are intentionally permissive enough for current onboarding
+    // and organization bootstrap flows. Tighten before production.
 
     match /users/{uid} {
       allow read: if request.auth != null && request.auth.uid == uid;

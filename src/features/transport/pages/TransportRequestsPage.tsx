@@ -9,13 +9,13 @@ import type { OrganizationMember } from '../../../core/models/types';
 
 export default function TransportRequestsPage() {
     const { user } = useAuth();
-
     const { t } = useI18n();
 
     const [result, setResult] = useState<any>(null);
     const [error, setError] = useState<string | null>(null);
     const [busy, setBusy] = useState(false);
 
+    // TODO: replace with real current organization membership context
     const mockMember: OrganizationMember = {
         organizationId: 'demo-org',
         uid: user?.uid ?? 'demo-user',
@@ -28,6 +28,7 @@ export default function TransportRequestsPage() {
         setBusy(true);
         setError(null);
         setResult(null);
+
         try {
             await writeSmokeDoc(user?.uid ?? null);
             setResult({ ok: true, action: 'write' });
@@ -42,11 +43,12 @@ export default function TransportRequestsPage() {
         setBusy(true);
         setError(null);
         setResult(null);
+
         try {
             const res = await readSmokeDoc();
             setResult({ ok: true, action: 'read', ...res });
-        } catch (e: any) {
-            setError(e?.message ?? String(e));
+        } catch (e: unknown) {
+            setError(e instanceof Error ? e.message : String(e));
         } finally {
             setBusy(false);
         }
@@ -80,7 +82,6 @@ export default function TransportRequestsPage() {
                 <Button variant="contained">Approve (visible only with permission)</Button>
             </RequirePermission>
 
-            {/* TODO: тук може да върне стария placeholder/таблица за Transport requests */}
             <Typography variant="body2" sx={{ opacity: 0.7 }}>
                 {t.pages.transport}
             </Typography>

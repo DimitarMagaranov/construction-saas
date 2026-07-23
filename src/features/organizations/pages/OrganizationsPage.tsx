@@ -26,6 +26,10 @@ export default function OrganizationsPage() {
                         ))}
                     </List>
                 )}
+
+                <Typography variant="body2" sx={{ opacity: 0.7 }}>
+                    TODO: resolve and display organization names instead of raw organization IDs.
+                </Typography>
             </Stack>
         </Box>
     );

@@ -37,9 +37,9 @@ Fields:
 - `updatedAt`
 
 Notes:
-- roles are organization-scoped
-- one user can have memberships in multiple organizations
-- permissions should be resolved from organization membership, not from global user profile
+- canonical membership records are stored under `organizations/{organizationId}/members/{uid}`
+- a user-side membership index may also be stored under `users/{uid}/memberships/{organizationId}`
+  for easier reads of "all organizations for current user"
 
 ## Multi-tenant rule
 Every document that belongs to an organization MUST contain `organizationId`.

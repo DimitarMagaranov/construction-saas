@@ -10,6 +10,11 @@ type Props = {
 };
 
 export default function RequirePermission({ member, permission, fallback = null, children }: Props) {
-    if (!hasPermission(member, permission)) return <>{fallback}</>;
+    const allowed = hasPermission(member, permission);
+
+    if (!allowed) {
+        return <>{fallback}</>;
+    }
+
     return <>{children}</>;
 }

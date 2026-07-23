@@ -11,11 +11,8 @@ type CreateUserProfileInput = {
 export async function createUserProfile({ uid, email, displayName }: CreateUserProfileInput) {
     const userProfile: UserProfile = {
         uid,
-        organizationId: 'demo-org',
         email,
         displayName: displayName ?? email,
-        roles: ['OrganizationOwner'],
-        projectRoles: {},
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
     };
