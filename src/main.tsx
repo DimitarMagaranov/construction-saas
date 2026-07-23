@@ -8,6 +8,7 @@ import App from './App';
 import { I18nProvider } from './app/i18n/i18n';
 import { AuthProvider } from './core/auth/AuthProvider';
 import { UserProfileProvider } from './core/users/UserProfileProvider';
+import { SelectedOrganizationProvider } from './core/organizations/SelectedOrganizationProvider';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
@@ -28,7 +29,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                 <I18nProvider>
                     <AuthProvider>
                         <UserProfileProvider>
-                            <App />
+                            <SelectedOrganizationProvider>
+                                <App />
+                            </SelectedOrganizationProvider>
                         </UserProfileProvider>
                     </AuthProvider>
                 </I18nProvider>

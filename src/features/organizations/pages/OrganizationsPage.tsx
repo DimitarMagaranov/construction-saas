@@ -1,13 +1,16 @@
-import { Alert, Box, List, ListItem, ListItemText, Stack, Typography } from '@mui/material';
+import { Alert, Box, Button, List, ListItem, ListItemText, Stack, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../../core/auth/AuthProvider';
 import { getOrganization } from '../../../core/organizations/getOrganization';
+import { useSelectedOrganization } from '../../../core/organizations/SelectedOrganizationProvider';
 import { useUserOrganizationMembers } from '../../../core/organizations/useUserOrganizationMembers';
 import type { Organization } from '../../../core/models/types';
 
 export default function OrganizationsPage() {
     const { user } = useAuth();
     const { members, loading, error } = useUserOrganizationMembers(user?.uid);
+    const { selectedOrganizationId, setSelectedOrganizationId } = useSelectedOrganization();
+
     const [organizationsById, setOrganizationsById] = useState<Record<string, Organization | null>>({});
     const [organizationsLoading, setOrganizationsLoading] = useState(false);
 
@@ -48,31 +51,78 @@ export default function OrganizationsPage() {
         };
     }, [members]);
 
+    if (loading) {
+        return (
+            <Box>
+                <Stack spacing={2}>
+                    <Typography variant="h4">Organizations</Typography>
+                    <Typography>Loading organizations...</Typography>
+                </Stack>
+            </Box>
+        );
+    }
+
+    if (error) {
+        return (
+            <Box>
+                <Stack spacing={2}>
+                    <Typography variant="h4">Organizations</Typography>
+                    <Alert severity="error">{error}</Alert>
+                </Stack>
+            </Box>
+        );
+    }
+
+    if (members.length === 0) {
+        return (
+            <Box>
+                <Stack spacing={2}>
+                    <Typography variant="h4">Organizations</Typography>
+                    <Typography>You do not belong to any organizations yet.</Typography>
+                </Stack>
+            </Box>
+        );
+    }
+
+    if (organizationsLoading) {
+        return (
+            <Box>
+                <Stack spacing={2}>
+                    <Typography variant="h4">Organizations</Typography>
+                    <Typography>Loading organization details...</Typography>
+                </Stack>
+            </Box>
+        );
+    }
+
     return (
         <Box>
             <Stack spacing={2}>
                 <Typography variant="h4">Organizations</Typography>
 
-                {loading && <Typography>Loading organizations...</Typography>}
+                <List>
+                    {members.map((member) => {
+                        const organization = organizationsById[member.organizationId];
 
-                {!loading && organizationsLoading && <Typography>Loading organization details...</Typography>}
+                        if (!organization) return null;
 
-                {error && <Alert severity="error">{error}</Alert>}
+                        const isSelected = selectedOrganizationId === member.organizationId;
 
-                {!loading && !error && members.length === 0 && <Typography>You do not belong to any organizations yet.</Typography>}
-
-                {!loading && !error && members.length > 0 && (
-                    <List>
-                        {members.map((member) => (
+                        return (
                             <ListItem key={`${member.organizationId}-${member.uid}`} disablePadding>
-                                <ListItemText
-                                    primary={organizationsById[member.organizationId]?.name ?? member.organizationId}
-                                    secondary={member.roles.join(', ')}
-                                />
+                                <ListItemText primary={organization.name} secondary={member.roles.join(', ')} />
+
+                                <Button
+                                    variant={isSelected ? 'contained' : 'outlined'}
+                                    size="small"
+                                    onClick={() => setSelectedOrganizationId(member.organizationId)}
+                                >
+                                    {isSelected ? 'Selected' : 'Select'}
+                                </Button>
                             </ListItem>
-                        ))}
-                    </List>
-                )}
+                        );
+                    })}
+                </List>
             </Stack>
         </Box>
     );

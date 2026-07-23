@@ -1,12 +1,17 @@
+import { useEffect, useMemo, useState } from 'react';
 import { Navigate, Outlet, Link as RouterLink, useLocation } from 'react-router-dom';
 import { AppBar, Box, Button, Divider, Drawer, List, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import BusinessIcon from '@mui/icons-material/Business';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-import { useI18n } from '../../../app/i18n/i18n';
 import { signOut } from 'firebase/auth';
-import { auth } from '../../../core/firebase/firebase';
+
+import { useI18n } from '../../../app/i18n/i18n';
 import { useAuth } from '../../../core/auth/AuthProvider';
+import { auth } from '../../../core/firebase/firebase';
+import { getOrganization } from '../../../core/organizations/getOrganization';
+import { useSelectedOrganization } from '../../../core/organizations/SelectedOrganizationProvider';
+import type { Organization } from '../../../core/models/types';
 import { useUserProfileContext } from '../../../core/users/UserProfileProvider';
 
 const drawerWidth = 260;
@@ -16,6 +21,62 @@ export default function AppLayout() {
     const { lang, setLang, t } = useI18n();
     const { user } = useAuth();
     const { profile, isLoading, resolved, resolvedUid, error } = useUserProfileContext();
+    const { selectedOrganizationId, isLoading: selectedOrganizationStateLoading } = useSelectedOrganization();
+
+    const [organizationsById, setOrganizationsById] = useState<Record<string, Organization | null>>({});
+    const [loadingOrganizationId, setLoadingOrganizationId] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (!selectedOrganizationId) {
+            setLoadingOrganizationId(null);
+            return;
+        }
+
+        const currentOrganizationId = selectedOrganizationId;
+        const cachedOrganization = organizationsById[currentOrganizationId];
+
+        if (cachedOrganization) {
+            setLoadingOrganizationId(null);
+            return;
+        }
+
+        let cancelled = false;
+        setLoadingOrganizationId(currentOrganizationId);
+
+        async function loadOrganization() {
+            try {
+                const organization = await getOrganization(currentOrganizationId);
+
+                if (cancelled) return;
+
+                setOrganizationsById((prev) => ({
+                    ...prev,
+                    [currentOrganizationId]: organization,
+                }));
+            } finally {
+                if (!cancelled) {
+                    setLoadingOrganizationId((prev) => (prev === currentOrganizationId ? null : prev));
+                }
+            }
+        }
+
+        loadOrganization();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [selectedOrganizationId, organizationsById]);
+
+    const currentOrganization = useMemo(
+        () => (selectedOrganizationId ? organizationsById[selectedOrganizationId] ?? null : null),
+        [selectedOrganizationId, organizationsById]
+    );
+
+    const shouldShowOrganizationName =
+        Boolean(selectedOrganizationId) &&
+        !selectedOrganizationStateLoading &&
+        loadingOrganizationId !== selectedOrganizationId &&
+        Boolean(currentOrganization);
 
     const navItems = [
         { label: t.nav.dashboard, path: '/dashboard', icon: <DashboardIcon /> },
@@ -39,6 +100,12 @@ export default function AppLayout() {
 
                     <Box sx={{ flexGrow: 1 }} />
 
+                    {shouldShowOrganizationName && (
+                        <Typography variant="body2" sx={{ mr: 2, opacity: 0.9 }}>
+                            Org: {currentOrganization?.name}
+                        </Typography>
+                    )}
+
                     {user?.email && (
                         <Typography variant="body2" sx={{ mr: 2, opacity: 0.9 }}>
                             {user.email}
@@ -50,11 +117,13 @@ export default function AppLayout() {
                             Profile: loading...
                         </Typography>
                     )}
+
                     {error && (
                         <Typography variant="body2" sx={{ mr: 2, color: 'error.main' }}>
                             Profile error
                         </Typography>
                     )}
+
                     {!isLoading && user && !profile && (
                         <Typography variant="body2" sx={{ mr: 2, color: 'warning.main' }}>
                             Profile missing
@@ -76,7 +145,10 @@ export default function AppLayout() {
                 sx={{
                     width: drawerWidth,
                     flexShrink: 0,
-                    [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
+                    '& .MuiDrawer-paper': {
+                        width: drawerWidth,
+                        boxSizing: 'border-box',
+                    },
                 }}
             >
                 <Toolbar />
@@ -84,6 +156,7 @@ export default function AppLayout() {
                     <List>
                         {navItems.map((item) => {
                             const selected = location.pathname === item.path;
+
                             return (
                                 <ListItemButton key={item.path} component={RouterLink} to={item.path} selected={selected}>
                                     <ListItemIcon>{item.icon}</ListItemIcon>

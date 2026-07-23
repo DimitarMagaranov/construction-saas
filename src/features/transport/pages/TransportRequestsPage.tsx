@@ -1,21 +1,27 @@
 import { useState } from 'react';
 import { Alert, Box, Button, Stack, Typography } from '@mui/material';
-import { readSmokeDoc, writeSmokeDoc } from '../../../core/firestore/smokeTest';
 import { useI18n } from '../../../app/i18n/i18n';
-import RequirePermission from '../../../core/rbac/RequirePermission';
-import { PERMISSIONS } from '../../../core/rbac/permissions';
 import { useAuth } from '../../../core/auth/AuthProvider';
+import { readSmokeDoc, writeSmokeDoc } from '../../../core/firestore/smokeTest';
 import type { OrganizationMember } from '../../../core/models/types';
+import { PERMISSIONS } from '../../../core/rbac/permissions';
+import RequirePermission from '../../../core/rbac/RequirePermission';
+
+type SmokeTestResult = {
+    ok: boolean;
+    action: 'read' | 'write';
+    [key: string]: unknown;
+};
 
 export default function TransportRequestsPage() {
     const { user } = useAuth();
     const { t } = useI18n();
 
-    const [result, setResult] = useState<any>(null);
+    const [result, setResult] = useState<SmokeTestResult | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [busy, setBusy] = useState(false);
 
-    // TODO: replace with real current organization membership context
+    // Temporary bridge until we introduce real selected/current organization member context.
     const mockMember: OrganizationMember = {
         organizationId: 'demo-org',
         uid: user?.uid ?? 'demo-user',
@@ -24,39 +30,57 @@ export default function TransportRequestsPage() {
         updatedAt: null,
     };
 
-    async function onWrite() {
+    function startAction() {
         setBusy(true);
         setError(null);
         setResult(null);
+    }
+
+    function finishAction() {
+        setBusy(false);
+    }
+
+    function handleError(error: unknown) {
+        setError(error instanceof Error ? error.message : String(error));
+    }
+
+    async function onWrite() {
+        startAction();
 
         try {
             await writeSmokeDoc(user?.uid ?? null);
             setResult({ ok: true, action: 'write' });
-        } catch (e: unknown) {
-            setError(e instanceof Error ? e.message : String(e));
+        } catch (error: unknown) {
+            handleError(error);
         } finally {
-            setBusy(false);
+            finishAction();
         }
     }
 
     async function onRead() {
-        setBusy(true);
-        setError(null);
-        setResult(null);
+        startAction();
 
         try {
-            const res = await readSmokeDoc();
-            setResult({ ok: true, action: 'read', ...res });
-        } catch (e: unknown) {
-            setError(e instanceof Error ? e.message : String(e));
+            const response = await readSmokeDoc();
+            setResult({ ok: true, action: 'read', ...response });
+        } catch (error: unknown) {
+            handleError(error);
         } finally {
-            setBusy(false);
+            finishAction();
         }
     }
 
     return (
         <Box>
-            <Box sx={{ mb: 3, p: 2, border: '1px solid', borderColor: 'divider', borderRadius: 2 }}>
+            <Box
+                sx={{
+                    mb: 3,
+                    p: 2,
+                    border: '1px solid',
+                    borderColor: 'divider',
+                    borderRadius: 2,
+                }}
+            >
                 <Typography variant="h6" sx={{ mb: 1 }}>
                     Firestore Smoke Test
                 </Typography>
@@ -65,12 +89,14 @@ export default function TransportRequestsPage() {
                     <Button variant="contained" onClick={onWrite} disabled={busy}>
                         Write test doc
                     </Button>
+
                     <Button variant="outlined" onClick={onRead} disabled={busy}>
                         Read test doc
                     </Button>
                 </Stack>
 
                 {error && <Alert severity="error">{error}</Alert>}
+
                 {result && (
                     <Alert severity="success">
                         <pre style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{JSON.stringify(result, null, 2)}</pre>

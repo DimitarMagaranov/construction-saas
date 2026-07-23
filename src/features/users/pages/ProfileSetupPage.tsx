@@ -8,6 +8,7 @@ import { useUserProfileContext } from '../../../core/users/UserProfileProvider';
 export default function ProfileSetupPage() {
     const { user } = useAuth();
     const { profile, isLoading } = useUserProfileContext();
+
     const [busy, setBusy] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -26,8 +27,8 @@ export default function ProfileSetupPage() {
                 email: user.email,
                 displayName: user.displayName,
             });
-        } catch (e: unknown) {
-            setError(e instanceof Error ? e.message : String(e));
+        } catch (error: unknown) {
+            setError(error instanceof Error ? error.message : String(error));
         } finally {
             setBusy(false);
         }
@@ -35,6 +36,10 @@ export default function ProfileSetupPage() {
 
     if (!isLoading && profile) {
         return <Navigate to="/dashboard" replace />;
+    }
+
+    if (isLoading) {
+        return null;
     }
 
     return (
